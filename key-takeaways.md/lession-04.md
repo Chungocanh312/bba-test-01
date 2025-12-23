@@ -232,7 +232,7 @@ if (!isLoggedIn) {
 }
 ```
 
-10. ### Vòng lặp for - in:
+10. ### Vòng lặp for - in: (thường dùng với object)
     Dùng để duyệt qua các thuộc tính (Properties) có thể đếm được của một object, bao gồm cả thuộc tính kế thừa.
 
 #### VD:
@@ -455,3 +455,396 @@ console.log(className4.indexOf("Sele"));
 // -1
 // Luôn luôn trả ra == -1
 ```
+
+#### 14. Utils fucntion - Array
+
+#### Hàm map()
+
+Sẽ tạo 1 mảng mới bằng cách áp dụng một hàm lên từng phần tử của mảng gốc. Trả về mảng mới có cùng độ dài
+
+Hàm call back là 1 hàm dùng để đưa vào trong 1 hàm khác. Và sẽ được gọi lại để sử dụng
+
+```javascript
+const number = [1, 2, 3, 4, 5];
+const doubled = number.map((num) => num * 2);
+
+console.log(doubled); // [2,4,6,8,10]
+console.log(numbers); // [1,2,3,4,5] - mảng gốc không thay đổi
+
+// Với hàm Map() (Và nhiều hàm mảng khác)
+// => parameter đầu tiên của callback luôn là giá trị của phần tử hiện tại trong mảng
+// parameter thứ hai là index của phần tử trong mảng
+
+// Dùng hàm map chuyển từ array sang object :
+const studentList = students.map((studentName, index) => ({
+  id: index + 1,
+  studentName: studentName,
+  code: `SV00${index + 1}`,
+}));
+
+console.log(studentList);
+```
+
+#### Hàm filter():
+
+Tạo mảng mới chỉ chứa các phần tử thỏa mãn điều kiện trong hàm callback. Trả về mảng đã được lọc
+
+```javascript
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const evenNumbers = numbers.filter((num) => num % 2 === 0);
+
+console.log(evenNumbers); // [2,4,6,8,10]
+console.log(numbers); // [1,2,3,4,5,6,7,8,9,10]; - mảng gốc không đổi
+
+//VD trong thực tế làm auto:
+const products = [
+  { name: "iphone 15 pro", price: 18000000, category: "phone", inStock: false },
+  { name: "samsung S24", price: 28000000, category: "phone", inStock: false },
+  {
+    name: "iphone 16 promax",
+    price: 32000000,
+    category: "phone",
+    inStock: true,
+  },
+  { name: "iphone 17", price: 24000000, category: "phone", inStock: true },
+  { name: "iphone 17 air", price: 30000000, category: "phone", inStock: true },
+  { name: "Macbook pro M1", price: 12000000, category: "phone", inStock: true },
+  { name: "Macbook pro M4", price: 49000000, category: "phone", inStock: true },
+  { name: "Macbook pro M5", price: 60000000, category: "phone", inStock: true },
+];
+
+// Lọc sản phẩm còn hàng:
+const availableProducts = products.filter((product) => product.inStock); // tự động hiểu là lấy giá trị === true
+console.log(availableProducts);
+
+// Lọc sản phẩm giá dưới 30 triệu:
+const affordableProducts = products.filter(
+  (product) => product.price <= 30000000
+);
+console.log(affordableProducts);
+
+// Lọc sản nhiều điều kiện: là điện thoại và còn hàng
+const availablePhones = products.filter(
+  (product) => product.category === "phone" && product.inStock
+);
+console.log(availablePhones);
+```
+
+#### Hàm find();
+
+Tìm và trả về phần tử đầu tiên trong mảng thỏa mãn điều kiện. Trả về undifined nếu không tìm thấy
+
+```javascript
+const numbers = [1, 5, 3, 8, 2, 10, 7];
+
+// Tìm số chẵn đầu tiên trong mảng
+const firstEvenNumber = numbers.find((num) => num % 2 === 0);
+console.log(firstEvenNumber); // 8 . Dừng ngay khi tìm thấy
+
+// Tìm số lớn hơn 6:
+const numberGreaterThanSix = number.find((num) => num > 6);
+console.log(numberGreaterThanSix); // 8. Dừng ngay khi tìm thấy
+
+// TH không tìm thấy và sẽ trả về undifined:
+const negativeNumber = number.find((num) => num < 0);
+console.log(negativeNumber); // undefined
+
+// VD trong thực tế làm auto:
+const users = [
+  { id: 101, name: "An", role: "admin", active: true },
+  { id: 102, name: "Bình", role: "user", active: false },
+  { id: 103, name: "Cường", role: "super Admin", active: true },
+  { id: 104, name: "Dũng", role: "admin", active: true },
+];
+
+// Tìm user theo ID:
+const userById = users.find((user) => user.id === 103);
+console.log(userById); // { id: 103, name: 'Cường', role: 'super Admin', active: true }
+
+// Tìm admin đầu tiên:
+const adminUser = users.find((user) => user.role === "admin");
+console.log(adminUser); // { id: 101, name: 'An', role: 'admin', active: true }
+
+// Tìm user không active:
+const inactiveUser = users.find((user) => !user.active);
+console.log(inactiveUser); // { id: 102, name: 'Bình', role: 'user', active: false }
+```
+
+#### Hàm reduce();
+
+Duyệt qua mảng và tích lũy các phần tử thành một giá trị duy nhất (số, chuỗi, object...) dựa trên hàm call back
+
+```javascript
+const numbersReduce = [1,2,3,4,5];
+// Tính tổng các giá trị có trong array trên
+
+// Cách hoạt động từng bước:
+const sum = nunumbersReducembers.reduce((accumulator,current) => {
+  console.log(`accumulator: ${accumulator}, current: ${current}`);
+  return accumulator + current;
+},0); // 0 được set là giá trị tích lũy ban đầu và sẽ được truyền vào biến accumulator, current là lần lượt các phần tử có bên trong mảng
+// => accumulator sau mỗi 1 lần sẽ lấy giá trị tích lũy từ lần trước
+
+// accumulator: 0, current: 1 => return 1 (sum của 0 + 1 = 1)
+// accumulator: 1, current: 2 => return 3 (sum của 1 + 2 = 3)
+// accumulator: 3, current: 3 => return 6 (sum của 3 + 3 = 6)
+// accumulator: 6, current: 4 => return 10 (sum của 6 + 4 = 10)
+// accumulator: 10, current: 5 => return 15 (sum của 10 + 5 = 15)
+
+console.log(sum); // => in ra 15
+
+// Bản chất là hàm reduce() sẽ duyệt như vòng lặp và sau mỗi lần duyệt sẽ thực thi theo code của hàm callback và sau đó tích lũy rồi sử dụng cho lần duyệt tiếp theo
+
+// VD thực tế:
+const cart = [
+  {product: 'Laptop', price: 30_000_000, quantity: 1},
+  {product: 'Mouse', price: 300_000, quantity: 2},
+  {product: 'Keyboard', price: 800_000, quantity: 1},
+  {product: 'Monitor', price: 5_000_000, quantity: 1}
+];
+
+// Tính tổng tiền giỏ hàng
+const totalAmount = cart.reduct((total, item) => {
+  return total + (item.price * item.quantity)
+},0);
+
+console.log(totalAmount) // In ra 36400000
+console.log(`Tổng tiền: ${totalAmount.toLocaleString(''vi-VN)}đ`); // In ra Tổng tiền: 36.400.000đ
+
+const totalItem = cart.reduce((totalItem, item) => totalItem + item.quantity,0);
+// có 1 điều kiện trả về nên không cần viết return
+
+console.log(`Tổng số sản phẩm: ${totalItem.toLocaleString('vi-VN')} sp`); // In ra 5 sp
+```
+
+#### Hàm some():
+
+Kiểm tra xem có ít nhất một phần tử trong mảng thỏa mãn điều kiện hay không. Trả về true/ false
+
+```javascript
+const numbersSome = [1, 3, 5, 7, 8, 9];
+
+// Kiểm tra có số chẵn không?
+const hasEven = numbersSome.some((num) => num % 2 === 0);
+console.log(hasEven); // true (vì có số 8)
+
+// Kiểm tra có số > 10 không
+const hasGreaterThan10 = numbersSome.some((num) => num > 10);
+console.log(hasGreaterThan10); // false (không có số nào lớn hơn 10)
+
+// Dừng ngay khi tìm thấy số chẵn và ghi lại log:
+const hasEvenWithLog = numbersSome.some((num) => {
+  console.log(`checking: ${num}`);
+  return num % 2 === 0;
+});
+// checking: 1
+// checking: 3
+// checking: 5
+// checking: 7
+// checking: 8
+// => Dừng không kiểm tra đến số 9 nữa
+
+// VD thực tế:
+const user = {
+  name: "Nguyễn Văn Anh",
+  roles: ["user", "editor"],
+};
+
+const adminRoles = ["admin", "superadmin"];
+const editorRoles = ["editor", "admin"];
+
+// Kiểm tra user có quyền editor không?
+const isEditor = user.roles.some((role) => editorRoles.includes(role));
+// ở đây ta kiểm tra mảng role trong object user xem nó có nằm trong editorRoles k
+console.log(`quyền edit của user là ${isEditor}`); // in ra quyền edit của user là true
+
+// Kiểm tra user có phải admin không?
+const isAdmin = user.roles.some((role) => adminRoles.includes(role));
+// ở đây ta kiểm tra mảng role trong object user xem nó có nằm trong adminRoles k
+console.log(`quyền admin bằng ${isAdmin}`); // in ra quyền admin bằng false
+
+// Hàm kiểm tra quyền tổng quát
+function hasPermission(userRoles, requiredRoles) {
+  return userRoles.some((role) => requiredRoles.includes(role));
+} // ở đây ta tạo hàm để có thể tái sử dụng
+
+console.log(hasPermission(user.roles, ["viewer", "editor"])); // in ra true
+```
+
+#### Hàm every()
+
+Kiểm tra xem tất cả phần tử trong mảng có thỏa mãn điều kiện hay không. Trả về true/false
+
+```javascript
+const numberEvery = [2,4,6,8,10];
+
+// Kiểm tra tất cả là số chẵn
+const allEven = numberEvery.every(num => num % 2 === 0)
+console.log(allEven) // true
+
+// Kiểm tra tất cả > 0 ?
+const allPositive = numberEvery.every(num => num > 0)
+console.log(allPositive) // true
+
+// Kiểm tra tất cả > 5?
+const allGreaterThan5 = numberEvery.every(num => num > 0)
+console.log(allGreaterThan5) // false
+
+// Dừng ngay khi gặp false
+const checkWithLog = numberEvery.every(num => {
+  console.log(`checking: ${num}`);
+  return num < 5;
+});
+
+// checking: 2
+// checking: 4
+// checking: 6
+// => Dừng lại tại 6, không kiểm tra tiếp 8, 10 do 6 đã không thỏa mãn điều kiện
+console.log(checkWithLog); // false
+
+// VD thực tế:
+const orderItems = [
+  { product: 'iphone 15', quantity: 1, inStock: 5, price: 25_000_000},
+  { product: 'AirPods', quantity: 2, inStock: 10, price: 4_000_000},
+  { product: 'Case', quantity: 1, inStock: 20, price: 500_000}
+];
+
+// Tất cả sản phẩm còn đủ hàng?
+const allAvailable = orderItems.every(item => item.quantity <= item.inStock);
+console.log(allAvailable) // true
+
+// Tất cả sản phẩm có gía hợp lệ? (tức là > 0)
+const allPriceIsValid = orderItems.every(item =>item.price > 0);
+console.log(allPriceIsValid) // true
+
+// Kiểm tra giới hạn số lượng (max mỗi 10 sản phẩm)
+const maxQuantity = orderItems.every(item => item.quantity <= 10);
+console.log(maxQuantity) // true
+
+// Kiểm tra tổng hợp các validation
+function isOrderValid (orderItems) {
+  return orderItems.every(item => 
+  item.quantity <= item.inStock &&
+  item.price > 0 &&
+  item.quantity <= 10);
+};
+
+console.log(isOrderValid(orderItems)); // true
+```
+#### Hàm sort():
+Sắp xếp các phần tử trong mảng theo thứ tự (mặc định là alphabet/ tăng dần). Thay đổi mảng gốc.
+
+```javascript
+// Sort chuỗi:
+const fruits = ['banana','apple','orange','grape'];
+fruits.sort();
+console.log(fruits); // ['apple','banana','grape','orange']
+
+// BUG phổ biến: sort số không đúng thoe mặc định!
+const numbersSort = [10,5,40,25,1000,1];
+numbers.sort(); // đoạn này sẽ làm thay đổi mảng gốc
+console.log(numbersSort); // sẽ in ra mảng sau khi đã thay đổi bởi sort
+// in ra [1, 10, 1000, 25, 40, 5] => sai!
+// Vì sort sẽ mặc định chuyển các phần từ thành string => "10" < "5" (do 1 nhỏ hơn 5 - so sánh ký tự đầu tiên của string)
+
+// Cách đúng: dùng compare function
+const numbersSort2 = [10,5,40,25,1000,1];
+numbersSort2.sort((a,b) => a - b); // tăng dần 
+// (a,b) => a-b là 1 compare function dạng lambda
+console.log(numbersSort2); // [1,5,10,25,40,1000] => ĐÚNG!
+
+numbersSort2.sort((a,b) => b - a); // giảm dần
+console.log(numbersSort2); // [ 1000, 40, 25, 10, 5, 1 ]
+
+// Giải thích chỗ compare function (a,b) => a - b)
+// compare function sẽ trả về:
+// - Số âm: a đứng trước b
+// - Số 0: giữ nguyên thứ tự
+// - Số dương: b đứng trước a
+
+const arr = [3,1,2];
+arr.sort((a,b) => {
+  console.log(`Compare ${a} với ${b}}}`);
+  if (a < b) return -1; // a trước b => đổi vị trí
+  if (a > b) return 1; // b trước a => đổi vị trí
+  return 0; // 2 số bằng nhau => giữ ngueyen vị trí
+});
+
+// Compare 3 với 1
+// Compare 3 với 2
+// Compare 2 với 1
+console.log(arr); // [1,2,3]
+
+// Viết ngắn gọn với phép trừ (cho số)
+arr.sort((a,b) => a - b); // tương đương code trên
+```
+
+#### Một số array ultis thường dùng khác:
+- #### push: 
+Thêm một hoặc nhiều phần tử vào cuối mảng. Thay đổi mảng gốc và trả về độ dài mới
+
+- #### pop:
+Xóa và trả về phần tử cuối cùng của mảng. Thay đổi mảng gốc và làm giảm độ dài
+
+- #### shift: 
+Xóa và trả về  phần tử đầu tiên của mảng. Thay đổi mảng gốc và làm giảm độ dài
+
+- #### unShift:
+Thêm một hoặc nhiều phần tử vào đầu mảng. Thay đổi mảng gốc và trả về độ dài mới của mảng.
+
+#### push:
+```javascript
+const fruitsPush = ['apple','banana'];
+const newLengthPush = fruitsPush.push('orange');
+
+console.log(fruitsPush); // ['apple','banana','orange']
+console.log(newLengthPush); // 3 (độ dài mới)
+// Lưu ý: ở đây mảng gốc sẽ thay đổi và khi ta in ra nó sẽ hiển thị mảng sau khi thay đổi
+// Còn nếu ta in với hàm push thì nó sẽ trả về độ dài của mảng sau khi thay đổi
+
+// Push nhiều phần từ cùng lúc
+fruitsPush.push('grape','mango');
+console.log(fruitsPush); //['apple','banana','orange','grape','mango']
+```
+
+#### pop: 
+```javascript
+const fruitsPop = ['apple','banana','orange','grape','mango'];
+const lastFruitsPop = fruitsPop.pop();
+
+console.log(fruitsPop); // ['apple','banana','orange','grape']; => mảng đã thay đổi
+console.log(lastFruitsPop); // 'mango' => phần tử cuối cùng và đã bị xóa
+
+// Pop từ mảng rỗng
+const emptyArr = [];
+const result = empty.pop();
+console.log(result); // undefined
+console.log(empty); // []
+```
+
+#### shift:
+```javascript
+const fruitsShift = ['apple','banana','orange','grape'];
+const firstFruitsShift = fruitsShift.shift();
+
+console.log(fruitsShift); // ['banana','orange','grape'] => mảng đã thay đổi
+console.log(firstFruitsShift); // 'apple' => phần tử đầu tiên và đã bị xóa
+
+// Shift từ mảng rỗng:
+const empty = [];
+const result = empty.shift();
+console.log(result); // undefined
+console.log(empty); // []
+```
+
+#### unShift:
+```javascript
+const fruitsUnShift = ['banana','orange'];
+const newLengthUnShift = fruitsUnShift.unShift('apple');
+
+console.log(fruitsUnShift); //['apple','banana','orange']
+console.log(newLengthUnShift); // 3 độ dài mới
+
+// unShift nhiều phần tử cùng lúc:
+fruitsUnShift.unShift('grape','mango');
+console.log(fruitsUnShift); // ['grape','mango','apple','banana','orange']
